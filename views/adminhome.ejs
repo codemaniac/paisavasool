@@ -1,0 +1,102 @@
+<% layout('layout') -%>
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#customertab" role="tab" data-toggle="tab">Customer</a></li>
+  <li><a href="#venturetab" role="tab" data-toggle="tab">Venture</a></li>
+</ul>
+
+<!-- Tab panes -->
+
+<div class="tab-content" style="padding-top: 50px;">
+  <div class="tab-pane active" id="customertab">
+	<form class="form-horizontal" role="form">
+    		<div class="form-group">
+		        <label for="customerid" class="col-sm-2 control-label">Customer</label>
+		        <div class="col-sm-10">
+				<input type="text" class="form-control" id="customerid" placeholder="ID">
+        		</div>
+    		</div>
+		<div class="form-group">
+        		<label for="pin" class="col-sm-2 control-label">Pin</label>
+        		<div class="col-sm-10">
+            			<input type="password" class="form-control" id="pin" placeholder="Pin">
+        		</div>
+    		</div> 
+    		<div class="form-group">
+        		<label for="amount" class="col-sm-2 control-label">Amount</label>
+        		<div class="col-sm-10">
+            			<input type="text" class="form-control" id="amount" placeholder="Amount">
+        		</div>
+    		</div>  
+    		<div class="form-group">
+        		<div class="col-sm-offset-2 col-sm-10">
+            			<button type="button" class="btn btn-info">Recharge</button>
+        		</div>
+    		</div>
+	</form>
+  </div>
+  <div class="tab-pane" id="venturetab">
+	<div class="row">
+  		<div class="col-xs-6">
+			<form class="form-horizontal" role="form">
+    				<div class="form-group">
+		        		<label for="venturename" class="col-sm-2 control-label">Venture</label>
+		        		<div class="col-sm-10">
+						<select id="venturename">
+  							<option value="volvo">Volvo</option>
+  							<option value="saab">Saab</option>
+  							<option value="mercedes">Mercedes</option>
+  							<option value="audi">Audi</option>
+						</select>       				
+					</div>
+    				</div>
+				<div class="form-group">
+        				<label for="withdrawalamount" class="col-sm-2 control-label">Amount</label>
+        				<div class="col-sm-10">
+            					<input type="text" class="form-control" id="withdrawalamount" placeholder="Amount">
+        				</div>
+    				</div> 
+		    		<div class="form-group">
+        				<div class="col-sm-offset-2 col-sm-10">
+            					<button type="button" class="btn btn-warning">Withdraw</button>
+		        		</div>
+    				</div>
+			</form>
+		</div>
+  		<div class="col-xs-6">
+			<form class="form-horizontal" role="form">
+    				<div class="form-group">
+		        		<label for="venturename" class="col-sm-2 control-label">Venture Name</label>
+		        		<div class="col-sm-10">
+						<input type="text" class="form-control" id="venturename" placeholder="Venture">
+        				</div>
+    				</div>
+				<div class="form-group">
+        				<label for="venturepwd" class="col-sm-2 control-label">Password</label>
+        				<div class="col-sm-10">
+            					<input type="password" class="form-control" id="venturepwd" placeholder="Password">
+        				</div>
+    				</div>
+				<div class="form-group">
+        				<label for="venturecpwd" class="col-sm-2 control-label">Confirm Password</label>
+        				<div class="col-sm-10">
+            					<input type="password" class="form-control" id="venturecpwd" placeholder="Password">
+        				</div>
+    				</div> 
+				<div class="form-group">
+		        		<label for="initcap" class="col-sm-2 control-label">Initial Capital</label>
+		        		<div class="col-sm-10">
+						<input type="text" class="form-control" id="initcap" placeholder="Venture">
+        				</div>
+    				</div>
+		    		<div class="form-group">
+        				<div class="col-sm-offset-2 col-sm-10">
+            					<button type="button" class="btn btn-info">Create</button>
+		        		</div>
+    				</div>
+			</form>
+		</div>
+	</div>
+  </div>
+</div>
