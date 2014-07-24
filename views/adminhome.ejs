@@ -10,6 +10,8 @@
 
 <div class="tab-content" style="padding-top: 50px;">
   <div class="tab-pane active" id="customertab" ng-controller="CustomerRechargeCtrl">
+	<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
+	<div class="well">
 	<form class="form-horizontal" role="form">
     		<div class="form-group">
 		        <label for="customerid" class="col-sm-2 control-label">Customer</label>
@@ -34,11 +36,13 @@
             			<button type="button" class="btn btn-info" ng-click="recharge()">Recharge</button>
         		</div>
     		</div>
-	</form>
+	</form>  
+	</div>      	
   </div>
   <div class="tab-pane" id="venturetab">
 	<div class="row">
   		<div class="col-xs-6" ng-controller="AdminVentureWithdrawCtrl">
+			<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
 			<form class="form-horizontal" role="form">
     				<div class="form-group">
 		        		<label for="venturename" class="col-sm-2 control-label">Venture</label>
@@ -68,6 +72,7 @@
 			</form>
 		</div>
   		<div class="col-xs-6" ng-controller="AdminVentureCreateCtrl">
+			<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
 			<form class="form-horizontal" role="form">
     				<div class="form-group">
 		        		<label for="venturename" class="col-sm-2 control-label">Venture Name</label>

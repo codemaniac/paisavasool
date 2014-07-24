@@ -4,13 +4,22 @@ var express = require('express'),
     mongodb = require('mongodb'),
     mongoose = require('mongoose'),
     bcrypt = require('bcrypt'),
+    winston = require('winston'),
     SALT_WORK_FACTOR = 10;
 
-mongoose.connect('localhost', 'test3');
+var logger = new (winston.Logger)({
+    transports: [
+      new (winston.transports.Console)(),
+      new (winston.transports.File)({ filename: 'master.log' })
+    ]
+  });
+logger.exitOnError = false;
+
+mongoose.connect('localhost', 'test9');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback() {
-    console.log('Connected to DB');
+    logger.log('info','Connected to DB');
 });
 
 // User Schema
@@ -30,6 +39,10 @@ var userSchema = mongoose.Schema({
     },
     balance: {
         type: Number,
+        required: true
+    },
+    role: {
+        type: String,
         required: true
     },
 });
@@ -79,16 +92,17 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
 var User = mongoose.model('User', userSchema);
 var Customer = mongoose.model('Customer', custSchema);
 var user = new User({
-    username: 'bob',
+    username: 'admin',
     password: 'secret',
     totalrevenue: 0,
-    balance: 0
+    balance: 0,
+    role: 'admin'
 });
 user.save(function(err) {
     if (err) {
-        console.log(err);
+	logger.log('warn','Could not save seed user! Might already be saved earlier');
     } else {
-        console.log('user: ' + user.username + " saved.");
+	logger.log('info', 'user: ' + user.username + ' saved');
     }
 });
 
@@ -172,6 +186,9 @@ app.post('/login', function(req, res, next) {
             req.session.messages = [info.message];
             return res.redirect('/login')
         }
+	if (user.role != 'venture') {
+		return res.redirect('/')
+	}
         req.logIn(user, function(err) {
             if (err) {
                 return next(err);
@@ -190,6 +207,9 @@ app.post('/adminlogin', function(req, res, next) {
             req.session.messages = [info.message];
             return res.redirect('/admin')
         }
+	if (user.role != 'admin'){
+	    res.redirect('/');
+	}
         req.logIn(user, function(err) {
             if (err) {
                 return next(err);
@@ -205,7 +225,7 @@ app.get('/logout', function(req, res) {
 });
 
 app.get('/leaderboard', function(req, res) {
-    var q = User.find().sort({
+    var q = User.find({'role': {'$ne': 'admin'}}).sort({
         'balance': 'descending'
     }).limit(10);
     q.exec(function(err, users) {
@@ -228,7 +248,7 @@ app.get('/venture', ensureAuthenticated, function(req, res) {
 });
 
 app.get('/ventures', ensureAuthenticated, function(req, res) {
-    User.find({}, function(err, ventures) {
+    User.find({'role': {'$ne': 'admin'}}, function(err, ventures) {
         res.send(ventures);
     });
 });
@@ -238,36 +258,40 @@ app.post('/venture/create', ensureAuthenticated, function(req, res) {
         username: req.body.name
     }, function(err, user) {
         if (err) {
-            console.log("Error !");
+	    logger.log('warn', 'Error while searching for venture!');
             res.send({
-                'success': false
+                'success': false,
+                'message' : 'Error while searching for venture!'
             });
         }
         if (!user) {
-            console.log("creating new user");
+	    logger.log('info', 'Creating new venture '+req.body.name);
             var newuser = new User({
                 username: req.body.name,
                 password: req.body.pwd,
-                totalrevenue: -(req.body.amount),
-                balance: -(req.body.amount)
+                totalrevenue: -(parseFloat(req.body.amount)),
+                balance: -(parseFloat(req.body.amount)),
+                role: 'venture'
             });
             newuser.save(function(err) {
                 if (err) {
-                    console.log(err);
+		    logger.log('warn', 'Error while saving venture - ' + req.body.name);
                     res.send({
-                        'success': false
+                        'success': false,
+                        'message': 'Error while saving venture'
                     });
                 } else {
-                    console.log('user: ' + req.body.name + " saved.");
+                    logger.log('info', 'New venture created - ' + req.body.name);
                     res.send({
                         'success': true
                     });
                 }
             });
         } else {
-            console.log("User already exists");
+	    logger.log('warn', 'Venture already exists - ' + req.body.name);
             res.send({
-                'success': false
+                'success': false,
+                'message': 'Venture already exists!'
             });
         }
     });
@@ -278,24 +302,29 @@ app.post('/venture/withdraw', ensureAuthenticated, function(req, res) {
         username: req.body.name
     }, function(err, user) {
         if (err) {
-            console.log("Error !");
+	    logger.log('warn', 'Error while withdrawing - ' + req.body.name);
             res.send({
-                'success': false
+                'success': false,
+                'message': 'Error while withdrawing!'
             });
         }
         if (!user) {
+            logger.log('warn', 'Error while withdrawing! No such venture exists - ' + req.body.name);
             res.send({
-                'success': false
+                'success': false,
+                'message': 'No such venture exists!'
             });
         } else {
             user.balance -= parseFloat(req.body.amount);
-            console.log(user.username + " balance deducted by " + req.body.amount);
             user.save(function(err) {
                 if (err) {
+                    logger.log('warn', 'Error while withdrawing! Error while saving - ' + req.body.name);
                     res.send({
-                        'success': false
+                        'success': false,
+                        'message': 'Error while saving!'
                     });
                 } else {
+		    logger.log('info', user.username + " balance deducted by " + req.body.amount);
                     res.send({
                         'success': true
                     });
@@ -310,57 +339,78 @@ app.post('/venture/sale', ensureAuthenticated, function(req, res) {
         username: req.user.username
     }, function(err, user) {
         if (err) {
-            console.log("Error !");
+	    logger.log('warn', 'Error while sale! Error while searching for venture - ' + req.user.username);
             res.send({
-                'success': false
+                'success': false,
+                'message': 'Error while sale! Error while searching for venture!'
             });
         }
         if (!user) {
+            logger.log('warn', 'Error while sale! No such venture exists - ' + req.user.username);
             res.send({
-                'success': false
+                'success': false,
+                'message': 'No such venture exists!'
             });
         } else {
             Customer.findOne({
                 custid: req.body.custid
             }, function(err, cust) {
                 if (err) {
-                    console.log("Error !");
+		    logger.log('warn', 'Error while finding customer for sale - ' + req.body.custid);
                     res.send({
-                        'success': false
+                        'success': false,
+                        'message': 'Error while finding customer for sale!'
                     });
                 }
                 if (!cust) {
-                    console.log("Error !");
+		    logger.log('warn', 'Trying to make sale for non-existant customer - ' + req.body.custid);
                     res.send({
-                        'success': false
+                        'success': false,
+                        'message': 'No such customer exists!'
                     });
                 } else {
                     if (cust.pin == req.body.pin) {
-                        cust.balance -= parseFloat(req.body.amount);
-                        cust.save(function(err) {
-                            if (err) {
+			if (cust.balance < req.body.amount) {
+				logger.log('warn', 'Insufficient balance - ' + req.body.custid);
                                 res.send({
-                                    'success': false
+                                    'success': false,
+                                    'message': 'Insufficient balance!'
                                 });
-                            } else {
-                                user.balance = user.balance + parseFloat(req.body.amount);
-				user.save(function(err) {
-                			if (err) {
-                    				res.send({
-                        				'success': false
-                    				});
-                			} else {
-						console.log(req.body.custid + ' --[' + req.body.amount + ']--> ' + req.user.username);
-                    				res.send({
-                        				'success': true
-                    				});
-                			}
-            			});
-                            }
-                        });
+			} else {
+                        	cust.balance -= parseFloat(req.body.amount);
+	                        cust.save(function(err) {
+        	                    if (err) {
+					logger.log('warn', 'Error while deducting balance from customer - ' + req.body.custid);
+                        	        res.send({
+                                	    'success': false,
+	                                    'message': 'Error while deducting balance from customer!'
+        	                        });
+                	            } else {
+                        	        user.balance = user.balance + parseFloat(req.body.amount);
+					user.save(function(err) {
+                				if (err) {
+							logger.log('warn', 'Error while saving balance to venture');
+							cust.balance += parseFloat(req.body.amount);
+							cust.save();
+                	    				res.send({
+                        					'success': false,
+                                	                        'message': 'Error while saving balance to venture!'
+                    					});
+	                			} else {
+							logger.log('info', req.body.custid + ' --[' + req.body.amount + ']--> ' + req.user.username);
+                	    				res.send({
+                        					'success': true
+                    					});
+                				}
+	            			});
+        	                    }
+                	        });
+			}
                     } else {
+			logger.log('warn', 'Error while sale ! Invalid PIN');
                         res.send({
-                            'success': false
+                            'success': false,
+                            'message': 'Invalid PIN!'
                         });
                     }
                 }
@@ -370,30 +420,67 @@ app.post('/venture/sale', ensureAuthenticated, function(req, res) {
     });
 });
 
+app.get('/customer/balance', ensureAuthenticated, function(req, res) {
+Customer.findOne({
+        custid: req.query.custid
+    }, function(err, cust) {
+        if (err) {
+	    logger.log('warn', 'Error while searching for customer - ' + req.body.custid);
+            res.send({
+                'success': false,
+                'message': 'Error while searching for customer!'
+            });
+        }
+        if (!cust) {
+	    logger.log('warn', 'Trying to get balance for non-existant customer - ' + req.body.custid);
+                    res.send({
+                        'success': false,
+                        'message': 'No such customer exists!'
+                    });            
+        } else {
+            if (cust.pin == req.query.pin) {
+                res.send({
+                        'success': true,
+                        'balance': cust.balance
+                    });                
+            } else {
+		logger.log('warn', 'Entered invalid PIN while recharging!');
+                res.send({
+                    'success': false,
+                    'message': 'Invalid PIN!'
+                });
+            }
+        }
+    });
+});
+
 app.post('/customer/recharge', ensureAuthenticated, function(req, res) {
     Customer.findOne({
         custid: req.body.custid
     }, function(err, cust) {
         if (err) {
-            console.log("Error !");
+	    logger.log('warn', 'Error while searching for customer - ' + req.body.custid);
             res.send({
-                'success': false
+                'success': false,
+                'message': 'Error while searching for customer!'
             });
         }
         if (!cust) {
+	    logger.log('info', 'Creating new customer - ' + req.body.custid);
             var newCust = new Customer({
                 custid: req.body.custid,
                 pin: req.body.pin,
-                balance: req.body.amount
+                balance: parseFloat(req.body.amount)
             });
             newCust.save(function(err) {
                 if (err) {
-                    console.log(err);
+        	    logger.log('warn', 'Error while saving customer - ' + req.body.custid);
                     res.send({
-                        'success': false
+                        'success': false,
+                        'message':'Error while saving customer!'
                     });
                 } else {
-                    console.log('customer: ' + req.body.custid + " saved.");
+                    logger.log('info', 'customer: ' + req.body.custid + " saved");
                     res.send({
                         'success': true
                     });
@@ -402,11 +489,13 @@ app.post('/customer/recharge', ensureAuthenticated, function(req, res) {
 
         } else {
             if (cust.pin == req.body.pin) {
-                cust.balance += req.body.amount;
+                cust.balance += parseFloat(req.body.amount);
                 cust.save(function(err) {
                     if (err) {
+			logger.log('warn', 'Error while saving customer during recharge - ' + req.body.custid);
                         res.send({
-                            'success': false
+                            'success': false,
+                            'message': 'Error while saving customer during recharge!'
                         });
                     } else {
                         res.send({
@@ -415,8 +504,10 @@ app.post('/customer/recharge', ensureAuthenticated, function(req, res) {
                     }
                 });
             } else {
+		logger.log('warn', 'Entered invalid PIN while recharging!');
                 res.send({
-                    'success': false
+                    'success': false,
+                    'message': 'Invalid PIN!'
                 });
             }
         }
