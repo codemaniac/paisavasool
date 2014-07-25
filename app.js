@@ -15,7 +15,7 @@ var logger = new (winston.Logger)({
   });
 logger.exitOnError = false;
 
-mongoose.connect('localhost', 'test11');
+mongoose.connect('localhost', 'test12');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback() {

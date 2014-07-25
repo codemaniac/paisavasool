@@ -21,32 +21,59 @@
 
 <body>
     <div class="container">
-    <h1>Leader Board</h1>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Venture</th>
-                <th>Current Balance</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% for(var i=0; i < users.length; i++) { %>
+        <h1>Leader Board</h1>
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>
-                        <%= (i+1) %>
-                    </td>
-                    <td>
-                        <%= users[i].username %>
-                    </td>
-                    <td>
-                        <%= users[i].balance %>
-                    </td>
+                    <th>#</th>
+                    <th>Venture</th>
+                    <th>Current Balance</th>
                 </tr>
-                <% } %>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < users.length; i++) { %>
+                    <tr>
+                        <td>
+                            <%= (i+1) %>
+                        </td>
+                        <td>
+                            <%=users[i].username %>
+                        </td>
+                        <td>
+                            <%= users[i].balance %>
+                        </td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
     </div>
+    <script>
+        var limit = "1:00"
+        if (document.images) {
+            var parselimit = limit.split(":")
+            parselimit = parselimit[0] * 60 + parselimit[1] * 1
+        }
+
+        function beginrefresh() {
+            if (!document.images)
+                return
+            if (parselimit == 1)
+                window.location.reload()
+            else {
+                parselimit -= 1
+                curmin = Math.floor(parselimit / 60)
+                cursec = parselimit % 60
+                if (curmin != 0)
+                    curtime = curmin + " minutes and " + cursec + " seconds left until page refresh!"
+                else
+                    curtime = cursec + " seconds left until page refresh!"
+                window.status = curtime
+                setTimeout("beginrefresh()", 1000)
+            }
+        }
+
+        window.onload = beginrefresh
+    </script>
 </body>
 
 </html>
