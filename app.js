@@ -15,7 +15,7 @@ var logger = new (winston.Logger)({
   });
 logger.exitOnError = false;
 
-mongoose.connect('localhost', 'test9');
+mongoose.connect('localhost', 'test11');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback() {
@@ -40,6 +40,10 @@ var userSchema = mongoose.Schema({
     balance: {
         type: Number,
         required: true
+    },
+    sales: {
+	type: Number,
+	required: true
     },
     role: {
         type: String,
@@ -96,6 +100,7 @@ var user = new User({
     password: 'secret',
     totalrevenue: 0,
     balance: 0,
+    sales: 0,
     role: 'admin'
 });
 user.save(function(err) {
@@ -271,6 +276,7 @@ app.post('/venture/create', ensureAuthenticated, function(req, res) {
                 password: req.body.pwd,
                 totalrevenue: -(parseFloat(req.body.amount)),
                 balance: -(parseFloat(req.body.amount)),
+		sales: 0,
                 role: 'venture'
             });
             newuser.save(function(err) {
@@ -387,6 +393,7 @@ app.post('/venture/sale', ensureAuthenticated, function(req, res) {
         	                        });
                 	            } else {
                         	        user.balance = user.balance + parseFloat(req.body.amount);
+					user.sales += 1;
 					user.save(function(err) {
                 				if (err) {
 							logger.log('warn', 'Error while saving balance to venture');

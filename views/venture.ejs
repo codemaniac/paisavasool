@@ -1,36 +1,85 @@
 <% layout('layout') -%>
 
-<p>Username: <%= user.username %></p>
-<p>Total Revenue: <%= user.totalrevenue %></p>
-<p>Balance: <%= user.balance %></p>
-
-<div class="col-xs-6" ng-controller="SaleCtrl">
-    <div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
-    <div class="well">
-    <form class="form-horizontal" role="form">
-    		<div class="form-group">
-		        <label for="customerid" class="col-sm-2 control-label">Customer ID</label>
-		        <div class="col-sm-10">
-				<input type="text" class="form-control" id="customerid" placeholder="ID" ng-model="sale.custid">
-        		</div>
-    		</div>
-		<div class="form-group">
-        		<label for="pin" class="col-sm-2 control-label">Pin</label>
-        		<div class="col-sm-10">
-            			<input type="password" class="form-control" id="pin" placeholder="Pin" ng-model="sale.pin">
-        		</div>
-    		</div> 
-    		<div class="form-group">
-        		<label for="amount" class="col-sm-2 control-label">Amount</label>
-        		<div class="col-sm-10">
-            			<input type="text" class="form-control" id="amount" placeholder="Amount" ng-model="sale.amount">
-        		</div>
-    		</div>  
-    		<div class="form-group">
-        		<div class="col-sm-offset-2 col-sm-10">
-            			<button type="button" class="btn btn-success" ng-click="doSale()">Process Sale</button>
-        		</div>
-    		</div>
-	</form>
+<div class="container">
+	<h2><%= user.username %></h2>
+	<div class="well">
+		<table class="table table-condensed">
+			<tr>
+				<td>&nbsp;</td>
+				<td><h3><%= user.balance %></h3></td>
+				<td><h3><%= user.sales %></h3></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>Balance</td>
+				<td>Sales</td>
+			</tr>
+		</table>
+	</div>
+<div class="row">
+  	<div class="col-xs-6" ng-controller="SaleCtrl">
+		<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
+		<div class="well">
+    			<form class="form-horizontal" role="form">
+    			<div class="form-group">	
+				<label for="customerid" class="col-sm-2 control-label">Customer ID</label>       			
+	       			<div class="col-sm-10">					
+					<input type="text" class="form-control" id="customerid" placeholder="ID" ng-model="sale.custid">
+        			</div>
+			</div>
+			<div class="form-group">        				
+				<label for="pin" class="col-sm-2 control-label">Pin</label>
+        			<div class="col-sm-10">					
+           				<input type="password" class="form-control" id="pin" placeholder="Pin" ng-model="sale.pin">
+        			</div>
+    			</div> 
+    			<div class="form-group">       
+				<label for="amount" class="col-sm-2 control-label">Amount</label> 			
+        			<div class="col-sm-10">					
+           				<input type="text" class="form-control" id="amount" placeholder="Amount" ng-model="sale.amount">
+        			</div>
+    			</div>  
+			<div class="form-group">
+        			<div class="col-sm-offset-2 col-sm-10">
+           				<button type="button" class="btn btn-success" ng-click="doSale()" ng-disabled="sale.custid == undefined || sale.pin == undefined || sale.amount == undefined"><span class="glyphicon glyphicon-shopping-cart"></span> Process Sale</button>
+        			</div>
+    			</div>
+			</form>
+		</div>
+	</div>
+	
+	<div class="col-xs-6" ng-controller="CustBalCtrl">
+	    	<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
+	    	<div class="well">
+    			<form class="form-horizontal" role="form">
+    				<div class="form-group">	
+					<label for="customerid" class="col-sm-2 control-label">Customer ID</label>       			
+		       			<div class="col-sm-10">					
+						<input type="text" class="form-control" id="customerid" placeholder="ID" ng-model="cust.custid">
+        				</div>
+				</div>
+				<div class="form-group">       
+					<label for="pin" class="col-sm-2 control-label">Pin</label> 				
+        				<div class="col-sm-10">					
+           					<input type="password" class="form-control" id="pin" placeholder="Pin" ng-model="cust.pin">
+	        			</div>
+    				</div>
+				<div class="form-group">	
+					<label for="balance" class="col-sm-2 control-label">Customer ID</label>       			
+	       				<div class="col-sm-10">
+						<input type="text" class="form-control" id="balance" placeholder="Available Balance" ng-model="balance" disabled>
+	        			</div>	
+				</div>
+				<div class="form-group">
+        				<div class="col-sm-offset-2 col-sm-10">
+           					<button type="button" class="btn btn-info" ng-click="checkBal()" ng-disabled="cust.custid == undefined || cust.pin == undefined"><span class="glyphicon glyphicon-eye-open"></span> Check Balance</button>
+	        			</div>	
+    				</div>
+			</form>
+		</div>
 	</div>
 </div>
+
+</div>
+
+

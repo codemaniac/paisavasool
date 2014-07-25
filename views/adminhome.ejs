@@ -7,104 +7,137 @@
 </ul>
 
 <!-- Tab panes -->
-
 <div class="tab-content" style="padding-top: 50px;">
-  <div class="tab-pane active" id="customertab" ng-controller="CustomerRechargeCtrl">
-	<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
-	<div class="well">
-	<form class="form-horizontal" role="form">
-    		<div class="form-group">
-		        <label for="customerid" class="col-sm-2 control-label">Customer</label>
-		        <div class="col-sm-10">
-				<input type="text" class="form-control" id="customerid" placeholder="ID" ng-model="cust.custid">
-        		</div>
-    		</div>
-		<div class="form-group">
-        		<label for="pin" class="col-sm-2 control-label">Pin</label>
-        		<div class="col-sm-10">
-            			<input type="password" class="form-control" id="pin" placeholder="Pin" ng-model="cust.pin">
-        		</div>
-    		</div> 
-    		<div class="form-group">
-        		<label for="amount" class="col-sm-2 control-label">Amount</label>
-        		<div class="col-sm-10">
-            			<input type="text" class="form-control" id="amount" placeholder="Amount" ng-model="cust.amount">
-        		</div>
-    		</div>  
-    		<div class="form-group">
-        		<div class="col-sm-offset-2 col-sm-10">
-            			<button type="button" class="btn btn-info" ng-click="recharge()">Recharge</button>
-        		</div>
-    		</div>
-	</form>  
-	</div>      	
-  </div>
-  <div class="tab-pane" id="venturetab">
-	<div class="row">
-  		<div class="col-xs-6" ng-controller="AdminVentureWithdrawCtrl">
-			<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
-			<form class="form-horizontal" role="form">
-    				<div class="form-group">
-		        		<label for="venturename" class="col-sm-2 control-label">Venture</label>
-		        		<div class="col-sm-10">
-						<select ng-model="venturename" ng-options="v.username for v in ventures">
-      							<option value="">-- choose venture --</option>
-    						</select>       				
-					</div>
-    				</div>
-				<div class="form-group">
-        				<label for="venturebalance" class="col-sm-2 control-label">Current Balance</label>
-        				<div class="col-sm-10">
-            					<h4>{{venturename.balance}}</h4>
-        				</div>
-    				</div>
-				<div class="form-group">
-        				<label for="withdrawalamount" class="col-sm-2 control-label">Amount</label>
-        				<div class="col-sm-10">
-            					<input type="text" class="form-control" id="withdrawalamount" placeholder="Amount" ng-model="venturewithdrawamount">
-        				</div>
-    				</div> 
-		    		<div class="form-group">
-        				<div class="col-sm-offset-2 col-sm-10">
-            					<button type="button" class="btn btn-warning" ng-click='withdraw()'>Withdraw</button>
-		        		</div>
-    				</div>
-			</form>
-		</div>
-  		<div class="col-xs-6" ng-controller="AdminVentureCreateCtrl">
-			<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
-			<form class="form-horizontal" role="form">
-    				<div class="form-group">
-		        		<label for="venturename" class="col-sm-2 control-label">Venture Name</label>
-		        		<div class="col-sm-10">
-						<input type="text" class="form-control" id="venturename" placeholder="Venture" ng-model="venture.name">
-        				</div>
-    				</div>
-				<div class="form-group">
-        				<label for="venturepwd" class="col-sm-2 control-label">Password</label>
-        				<div class="col-sm-10">
-            					<input type="password" class="form-control" id="venturepwd" placeholder="Password" ng-model="venture.pwd">
-        				</div>
-    				</div>
-				<div class="form-group">
-        				<label for="venturecpwd" class="col-sm-2 control-label">Confirm Password</label>
-        				<div class="col-sm-10">
-            					<input type="password" class="form-control" id="venturecpwd" placeholder="Password" ng-model="venture.cpwd">
-        				</div>
-    				</div> 
-				<div class="form-group">
-		        		<label for="initcap" class="col-sm-2 control-label">Initial Capital</label>
-		        		<div class="col-sm-10">
-						<input type="text" class="form-control" id="initcap" placeholder="Amount" ng-model="venture.amount">
-        				</div>
-    				</div>
-		    		<div class="form-group">
-        				<div class="col-sm-offset-2 col-sm-10">
-            					<button type="button" class="btn btn-info" ng-click='createVenture()' >Create</button>
-		        		</div>
-    				</div>
-			</form>
-		</div>
+ 	<div class="tab-pane active" id="customertab">
+		<div class="row">
+			<div class="col-xs-6" ng-controller="CustomerRechargeCtrl">
+				<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
+				<div class="well">
+					<form class="form-horizontal" role="form">
+    						<div class="form-group">
+		        				<label for="customerid" class="col-sm-2 control-label">Customer</label>
+		        				<div class="col-sm-10">
+								<input type="text" class="form-control" id="customerid" placeholder="ID" ng-model="cust.custid">
+        						</div>
+	    					</div>
+						<div class="form-group">
+        						<label for="pin" class="col-sm-2 control-label">Pin</label>
+        						<div class="col-sm-10">
+            							<input type="password" class="form-control" id="pin" placeholder="Pin" ng-model="cust.pin">
+        						</div>
+	    					</div> 
+    						<div class="form-group">
+        						<label for="amount" class="col-sm-2 control-label">Amount</label>
+        						<div class="col-sm-10">
+            							<input type="text" class="form-control" id="amount" placeholder="Amount" ng-model="cust.amount">
+        						</div>
+	    					</div>  
+    						<div class="form-group">
+        						<div class="col-sm-offset-2 col-sm-10">
+            							<button type="button" class="btn btn-info" ng-click="recharge()" ng-disabled="cust.custid == undefined || cust.pin == undefined || cust.amount == undefined"><span class="glyphicon glyphicon-flash"></span> Recharge</button>
+        						</div>
+    						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col-xs-6" ng-controller="CustBalCtrl">
+	    			<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
+			    	<div class="well">
+    					<form class="form-horizontal" role="form">
+    						<div class="form-group">	
+							<label for="customerid" class="col-sm-2 control-label">Customer ID</label>       			
+				       			<div class="col-sm-10">					
+								<input type="text" class="form-control" id="customerid" placeholder="ID" ng-model="cust.custid">
+		        				</div>
+						</div>
+						<div class="form-group">       
+							<label for="pin" class="col-sm-2 control-label">Pin</label> 				
+        						<div class="col-sm-10">					
+           							<input type="password" class="form-control" id="pin" placeholder="Pin" ng-model="cust.pin">
+			        			</div>
+    						</div>
+						<div class="form-group">	
+							<label for="balance" class="col-sm-2 control-label">Customer ID</label>       			
+	       						<div class="col-sm-10">
+								<input type="text" class="form-control" id="balance" placeholder="Available Balance" ng-model="balance" disabled>
+			        			</div>	
+						</div>
+						<div class="form-group">
+	        					<div class="col-sm-offset-2 col-sm-10">
+        	   						<button type="button" class="btn btn-success" ng-click="checkBal()" ng-disabled="cust.custid == undefined || cust.pin == undefined"><span class="glyphicon glyphicon-eye-open"></span> Check Balance</button>
+	        					</div>	
+    						</div>
+					</form>	
+				</div>
+			</div>
+		</div>	     	
 	</div>
-  </div>
+  	<div class="tab-pane" id="venturetab">
+		<div class="row">
+  			<div class="col-xs-6" ng-controller="AdminVentureWithdrawCtrl">
+				<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
+				<form class="form-horizontal" role="form">
+    					<div class="form-group">
+			        		<label for="venturename" class="col-sm-2 control-label">Venture</label>
+		        			<div class="col-sm-10">
+							<select ng-model="venturename" ng-options="v.username for v in ventures">
+      								<option value="">-- choose venture --</option>
+    							</select>       				
+						</div>
+    					</div>
+					<div class="form-group">
+        					<label for="venturebalance" class="col-sm-2 control-label">Current Balance</label>
+        					<div class="col-sm-10">
+							<input type="text" class="form-control" id="venturebalance" placeholder="Available Balance" ng-model="venturename.balance" disabled>
+	        				</div>	
+    					</div>
+					<div class="form-group">
+        					<label for="withdrawalamount" class="col-sm-2 control-label">Amount</label>
+        					<div class="col-sm-10">
+            						<input type="text" class="form-control" id="withdrawalamount" placeholder="Amount" ng-model="venturewithdrawamount">
+	        				</div>
+    					</div> 
+			    		<div class="form-group">
+        					<div class="col-sm-offset-2 col-sm-10">
+            						<button type="button" class="btn btn-warning" ng-click='withdraw()' ng-disabled="venturewithdrawamount == undefined"><span class="glyphicon glyphicon-transfer"></span> Withdraw</button>
+		        			</div>
+    					</div>
+				</form>
+			</div>
+	  		<div class="col-xs-6" ng-controller="AdminVentureCreateCtrl">
+				<div class="alert alert-info" role="alert">{{status}} {{flashmsg}}</div>
+				<form class="form-horizontal" role="form">
+    					<div class="form-group">
+		        			<label for="venturename" class="col-sm-2 control-label">Venture Name</label>
+			        		<div class="col-sm-10">
+							<input type="text" class="form-control" id="venturename" placeholder="Venture" ng-model="venture.name">
+        					</div>
+    					</div>
+					<div class="form-group">
+	        				<label for="venturepwd" class="col-sm-2 control-label">Password</label>
+        					<div class="col-sm-10">
+            						<input type="password" class="form-control" id="venturepwd" placeholder="Password" ng-model="venture.pwd">
+        					</div>
+    					</div>
+					<div class="form-group">
+        					<label for="venturecpwd" class="col-sm-2 control-label">Confirm Password</label>
+        					<div class="col-sm-10">
+            						<input type="password" class="form-control" id="venturecpwd" placeholder="Password" ng-model="venture.cpwd">
+        					</div>
+	    				</div> 
+					<div class="form-group">
+			        		<label for="initcap" class="col-sm-2 control-label">Initial Capital</label>
+		        			<div class="col-sm-10">
+							<input type="text" class="form-control" id="initcap" placeholder="Amount" ng-model="venture.amount">
+        					</div>
+	    				</div>
+			    		<div class="form-group">
+        					<div class="col-sm-offset-2 col-sm-10">
+            						<button type="button" class="btn btn-info" ng-click='createVenture()' ng-disabled="venture.name == undefined || venture.pwd == undefined || venture.cpwd == undefined || venture.amount == undefined" ><span class="glyphicon glyphicon-plus"></span> Create</button>
+		        			</div>
+	    				</div>
+				</form>
+			</div>
+		</div>
+	</div>	
 </div>
