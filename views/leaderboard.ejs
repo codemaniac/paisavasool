@@ -21,31 +21,49 @@
 
 <body>
     <div class="container">
-        <h1>Leader Board</h1>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Venture</th>
-                    <th>Current Balance</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% for(var i=0; i < users.length; i++) { %>
-                    <tr>
-                        <td>
-                            <%= (i+1) %>
-                        </td>
-                        <td>
-                            <%=users[i].username %>
-                        </td>
-                        <td>
-                            <%= users[i].balance %>
-                        </td>
-                    </tr>
-                    <% } %>
-            </tbody>
-        </table>
+	<h1>Leader Board</h1>
+	<div class="col-md-6">
+		<h3>Profit</h3>
+		<table class="table table-striped">
+            		<thead>
+		                <tr>
+                		    <th>#</th>
+		                    <th>Venture</th>
+		                    <th>Profit</th>
+		                </tr>
+			</thead>
+            		<tbody>
+                		<% for(var i=0; i < pusers.length; i++) { %>
+                    			<tr>
+                        			<td><%= (i+1) %></td>
+                        			<td><%= pusers[i].username %></td>
+						<td><%= pusers[i].balance %></td>
+                    			</tr>
+                    		<% } %>
+            		</tbody>
+        	</table>
+	</div>
+	<div class="col-md-6">
+		<h3>Revenue</h3>
+		<table class="table table-striped">
+            		<thead>
+                		<tr>
+                    			<th>#</th>
+                    			<th>Venture</th>
+                    			<th>Total Revenue</th>
+                		</tr>
+            		</thead>
+            		<tbody>
+                		<% for(var i=0; i < rusers.length; i++) { %>
+                    			<tr>
+                        			<td><%= (i+1) %></td>
+                        			<td><%= rusers[i].username %></td>
+                        			<td><%= rusers[i].totalrevenue %></td>
+                    			</tr>
+                    		<% } %>
+            		</tbody>
+        	</table>
+	</div>      
     </div>
     <script>
         var limit = "1:00"

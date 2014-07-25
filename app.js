@@ -15,7 +15,7 @@ var logger = new (winston.Logger)({
   });
 logger.exitOnError = false;
 
-mongoose.connect('localhost', 'test12');
+mongoose.connect('localhost', 'test14');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback() {
@@ -230,13 +230,15 @@ app.get('/logout', function(req, res) {
 });
 
 app.get('/leaderboard', function(req, res) {
-    var q = User.find({'role': {'$ne': 'admin'}}).sort({
-        'balance': 'descending'
-    }).limit(10);
-    q.exec(function(err, users) {
-        res.render('leaderboard', {
-            users: users
-        });
+    var q = User.find({'role': {'$ne': 'admin'}}).sort({'balance': 'descending'}).limit(15);
+    q.exec(function(err, pusers) {
+	var q1 = User.find({'role': {'$ne': 'admin'}}).sort({'totalrevenue': 'descending'}).limit(15);
+	q1.exec(function(err, rusers) {
+		res.render('leaderboard', {
+            		pusers: pusers,
+			rusers: rusers
+        	});
+	});        
     });
 });
 
@@ -274,7 +276,7 @@ app.post('/venture/create', ensureAuthenticated, function(req, res) {
             var newuser = new User({
                 username: req.body.name,
                 password: req.body.pwd,
-                totalrevenue: -(parseFloat(req.body.amount)),
+                totalrevenue: 0,
                 balance: -(parseFloat(req.body.amount)),
 		sales: 0,
                 role: 'venture'
@@ -393,6 +395,7 @@ app.post('/venture/sale', ensureAuthenticated, function(req, res) {
         	                        });
                 	            } else {
                         	        user.balance = user.balance + parseFloat(req.body.amount);
+					user.totalrevenue += parseFloat(req.body.amount);
 					user.sales += 1;
 					user.save(function(err) {
                 				if (err) {
