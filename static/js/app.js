@@ -3,6 +3,7 @@ var app = angular.module('paisavasoolApp', ['ngProgress']);
 app.controller('AdminVentureCreateCtrl', function($scope, $http, ngProgress) {
     $scope.createVenture = function() {
         if ($scope.venture.pwd == $scope.venture.cpwd) {
+		if ($scope.venture.amount <= 7500) {
             ngProgress.start();
             $http.post('/venture/create', $scope.venture).success(function(data) {
                 $scope.venture = undefined;
@@ -15,6 +16,10 @@ app.controller('AdminVentureCreateCtrl', function($scope, $http, ngProgress) {
                 }
                 ngProgress.complete();
             });
+		} else {
+			$scope.status = "Error!";
+            $scope.flashmsg = "Investing too much!";
+		}
         } else {
             $scope.status = "Error!";
             $scope.flashmsg = "Passwords do not match!";

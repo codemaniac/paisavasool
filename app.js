@@ -15,7 +15,7 @@ var logger = new (winston.Logger)({
   });
 logger.exitOnError = false;
 
-mongoose.connect('localhost', 'test14');
+mongoose.connect('localhost', 'test20');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback() {
@@ -40,7 +40,11 @@ var userSchema = mongoose.Schema({
     balance: {
         type: Number,
         required: true
-    },
+    },    
+    investamount: {
+	type: Number,
+	required: true
+    },    
     sales: {
 	type: Number,
 	required: true
@@ -99,7 +103,8 @@ var user = new User({
     username: 'admin',
     password: 'secret',
     totalrevenue: 0,
-    balance: 0,
+    balance: 0,    
+    investamount: 0,
     sales: 0,
     role: 'admin'
 });
@@ -277,8 +282,9 @@ app.post('/venture/create', ensureAuthenticated, function(req, res) {
                 username: req.body.name,
                 password: req.body.pwd,
                 totalrevenue: 0,
-                balance: -(parseFloat(req.body.amount)),
-		sales: 0,
+                balance: 0,
+                sales: 0,
+		investamount: parseFloat(req.body.amount),
                 role: 'venture'
             });
             newuser.save(function(err) {
@@ -324,6 +330,7 @@ app.post('/venture/withdraw', ensureAuthenticated, function(req, res) {
             });
         } else {
             user.balance -= parseFloat(req.body.amount);
+	    user.investamount += parseFloat(req.body.amount);
             user.save(function(err) {
                 if (err) {
                     logger.log('warn', 'Error while withdrawing! Error while saving - ' + req.body.name);
@@ -332,7 +339,7 @@ app.post('/venture/withdraw', ensureAuthenticated, function(req, res) {
                         'message': 'Error while saving!'
                     });
                 } else {
-		    logger.log('info', user.username + " balance deducted by " + req.body.amount);
+		    logger.log('info', user.username + " balance deducted by " + req.body.amount + " and invested");
                     res.send({
                         'success': true
                     });
@@ -394,7 +401,7 @@ app.post('/venture/sale', ensureAuthenticated, function(req, res) {
 	                                    'message': 'Error while deducting balance from customer!'
         	                        });
                 	            } else {
-                        	        user.balance = user.balance + parseFloat(req.body.amount);
+                        	        user.balance += parseFloat(req.body.amount);
 					user.totalrevenue += parseFloat(req.body.amount);
 					user.sales += 1;
 					user.save(function(err) {
